@@ -504,6 +504,38 @@ function App() {
     controls.bgOuterRadius,
   ]);
 
+  // Handle keyboard arrow navigation (up and down keys)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        const divs = document.getElementsByTagName("div");
+        let scrollEl = null;
+        for (let i = 0; i < divs.length; i++) {
+          const style = window.getComputedStyle(divs[i]);
+          if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflow === 'auto' || style.overflow === 'scroll') {
+            if (divs[i].clientHeight > 0) {
+              scrollEl = divs[i];
+              break;
+            }
+          }
+        }
+        
+        if (scrollEl) {
+          e.preventDefault();
+          const scrollAmount = 280; // Pixels to scroll per arrow click
+          if (e.key === "ArrowDown") {
+            scrollEl.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+          } else if (e.key === "ArrowUp") {
+            scrollEl.scrollBy({ top: -scrollAmount, behavior: 'smooth' });
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleJsonApply = () => {
     try {
       const parsed = JSON.parse(jsonText);
